@@ -1,0 +1,4 @@
+data_source_name,table_name,credentials,primary_key,watermark,ingestion_type,transformation_script
+usgs,water_levels,usgs_creds,site_no,datetime,Incremental,clean_water_data.sql
+open_meteo,weather_data,meteo_creds,location_id,date,Incremental,normalize_temp.sql
+custom_csv,sales_data,local_fs,id,created_at,Full,transform_sales.sql

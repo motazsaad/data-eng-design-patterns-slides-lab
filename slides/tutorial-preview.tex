@@ -1,0 +1,169 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes.geometric}
+
+\title{Data Engineering Design Patterns: Ingestion, Transformation, Promotion, and LLM Pipelines}
+\subtitle{ICDE 2027 tutorial proposal --- slide preview}
+\author{Motaz K. H. Saad \and Chiara Rucco \and Antonella Longo}
+\institute{DataLab, Dept.\ of Engineering for Innovation, University of Salento}
+\date{ICDE 2027 tutorial proposal --- 13 slides}
+
+\begin{document}
+
+% 1
+\begin{frame}
+  \titlepage
+  \vspace{0.5em}
+  \small Format: 1.5 h or 3 h (3 h preferred, with hands-on lab)
+\end{frame}
+
+% 2
+\begin{frame}{Why design patterns for data engineering?}
+  \begin{itemize}
+    \item Teams repeatedly build the same pipeline kinds: ingest $\rightarrow$ validate $\rightarrow$ transform $\rightarrow$ orchestrate $\rightarrow$ promote
+    \item The discipline lacks a shared, reusable vocabulary for these solutions
+    \item Design patterns capture proven structure, trade-offs, and applicability
+    \item Enables reasoning about pipelines instead of reinventing them
+  \end{itemize}
+\end{frame}
+
+% 3
+\begin{frame}{Outline}
+  \begin{enumerate}
+    \item Foundations: what a design pattern is \hfill \textit{15 min}
+    \item Ingestion patterns: MIND and cloud \hfill \textit{20 min (3 h: 35)}
+    \item Transformation patterns: ETLT and ELTL \hfill \textit{20 min (3 h: 35)}
+    \item Environment-aware promotion: EADF \hfill \textit{15 min (3 h: 20)}
+    \item LLM-generated pipelines and evaluation \hfill \textit{15 min (3 h: 25)}
+    \item Open challenges \hfill \textit{5 min}
+    \item Q\&A \hfill \textit{---}
+  \end{enumerate}
+  \vspace{0.5em}
+  \small 3 h total: 180 min $\cdot$ 1.5 h: 90 min
+\end{frame}
+
+% 4
+\begin{frame}{Foundations: what a design pattern is}
+  \begin{itemize}
+    \item POSA form: problem $\rightarrow$ context $\rightarrow$ forces $\rightarrow$ solution $\rightarrow$ consequences
+    \item Pattern vs. architecture vs. framework vs. tool
+    \item A pattern language for data engineering:
+    \begin{itemize}
+      \item Ingestion
+      \item Transformation
+      \item Orchestration
+      \item Quality
+      \item Promotion
+      \item Observability
+    \end{itemize}
+    \item Why patterns matter: reuse, communication, governance, auditability
+  \end{itemize}
+\end{frame}
+
+% 5
+\begin{frame}{Ingestion patterns: MIND}
+  \begin{itemize}
+    \item Metadata-driven ingestion: connectors declared as data, not code
+    \item Schema/metadata catalog; idempotent, resumable loads
+    \item Forces: latency, cost, schema evolution, exactly-once vs. at-least-once
+    \item Case study: ingestion at scale from the SESG platform
+  \end{itemize}
+\end{frame}
+
+% 6
+\begin{frame}{Ingestion patterns: cloud-based}
+  \begin{itemize}
+    \item Object storage + queue + compute; batching vs. streaming
+    \item Backpressure and retry patterns
+    \item Trade-offs: latency $\cdot$ cost $\cdot$ governance
+    \item Related: IEEE BigData 2024, IEEE S\&E 2026
+  \end{itemize}
+\end{frame}
+
+% 7
+\begin{frame}{Transformation patterns: ETLT and ELTL}
+  \begin{itemize}
+    \item ETL vs. ELT vs. ETLT vs. ELTL: stage structures and data layers
+    \item Trade-offs under scale and governance constraints
+    \item Enhanced variants ETLT++ and ELTL++: contracts, versioning,
+    semantic curation, continuous monitoring
+    \item Related: FGCS 2026, BigData Research 2026
+  \end{itemize}
+\end{frame}
+
+% 8
+\begin{frame}{EADF: Environment-aware promotion in CI/CD}
+  \begin{itemize}
+    \item The promotion problem: environment-specific bindings as hidden technical debt
+    \item EADF: four YAML artifacts (component, environment catalog,
+    pipeline template, promotion policy) with late binding at deploy time
+    \item Data-quality gates, schema evolution, stateful components
+    \item Tool-neutral: GitHub Actions, GitLab CI, Azure DevOps,
+    Airflow, dbt
+  \end{itemize}
+\end{frame}
+
+% 9
+\begin{frame}{LLM-generated pipelines and evaluation}
+  \begin{itemize}
+    \item Orchestrator landscape: Airflow (Python DAG), n8n (JSON),
+    Dagster (Python job), Prefect (Python flow), NiFi (Groovy),
+    Kestra (YAML)
+    \item Why syntactically valid $\neq$ correct: score the data delivered
+    \item Execution-based benchmark: six tasks, archived fixtures,
+    one contract, Dockerised execution, up to two repair rounds
+    \item Failure taxonomy: artifact, execution, platform, harness
+  \end{itemize}
+\end{frame}
+
+% 10
+\begin{frame}{Open challenges}
+  \begin{itemize}
+    \item Pattern mining, validation, and versioning
+    \item Benchmark validity, contamination, and reproducibility
+    \item Governance, provenance, cost, and human-in-the-loop pipelines
+  \end{itemize}
+\end{frame}
+
+% 11
+\begin{frame}{Hands-on lab (3 h version)}
+  \begin{itemize}
+    \item Specify a pipeline task, generate an artifact with a local LLM (Ollama)
+    \item Deploy it to a containerized orchestrator, score delivered records against reference output
+    \item Supported OS: Linux, macOS, Windows 11 with WSL2
+    \item Required: Python 3.10+, Docker, Ollama; laptop $\geq$8\,GB RAM
+    \item Follow-along: pre-pulled Docker images, cached models; no downloads over Wi-Fi
+  \end{itemize}
+\end{frame}
+
+% 12
+\begin{frame}{Hands-on lab and resources}
+  \begin{itemize}
+    \item Code: open-source, Apache-2.0, made available to attendees
+    \item Companion benchmark harness, fixtures, reference artifacts (released with [R6])
+    \item Text-to-SQL reference demo
+    \item ESG RAG evaluation and embedding-benchmark repositories
+    \item Slide preview and lab setup guide released before conference
+  \end{itemize}
+  \vspace{0.5em}
+  \centering Questions and discussion
+\end{frame}
+
+% 13
+\begin{frame}
+  \centering Thank you!
+  \vspace{1em}
+  \small Questions?
+  \\\\
+  \textit{Motaz K. H. Saad} $\rightarrow$ motaz.saad@unisalento.it\\
+  \textit{Chiara Rucco} $\rightarrow$ chiara.rucco@unisalento.it\\
+  \textit{Antonella Longo} $\rightarrow$ antonella.longo@unisalento.it
+\end{frame}
+
+\end{document}

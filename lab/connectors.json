@@ -1,0 +1,25 @@
+[
+  {
+    "name": "usgs",
+    "type": "api",
+    "description": "USGS water level data API",
+    "endpoint": "https://waterdata.usgs.gov/nwis",
+    "auth": "none",
+    "schedule": "hourly"
+  },
+  {
+    "name": "open_meteo",
+    "type": "api",
+    "description": "Open-Meteo weather data API",
+    "endpoint": "https://api.open-meteo.com/v1",
+    "auth": "api_key",
+    "schedule": "every 5 min"
+  },
+  {
+    "name": "custom_csv",
+    "type": "file",
+    "description": "Custom CSV files on local disk",
+    "path": "/data/raw/csv",
+    "schedule": "daily"
+  }
+]
