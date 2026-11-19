@@ -1,6 +1,6 @@
-# ICDE 2027 Tutorial — Data Engineering Design Patterns
+# Tutorial — Data Engineering Design Patterns
 
-Companion repository for the ICDE 2027 tutorial proposal
+Companion repository for the tutorial proposal
 **"Data Engineering Design Patterns: Ingestion, Transformation, Environment Promotion, and LLM-Generated Pipelines"**
 by Motaz K. H. Saad, Chiara Rucco, and Antonella Longo (University of Salento).
 
