@@ -1,75 +1,61 @@
-# Data Engineering Design Patterns — Hands-on Lab
+# Hands-on Lab — A Data-Management Perspective on Data Engineering Design Patterns
 
-> **3-hour tutorial only.** Supported operating systems: Linux, macOS, Windows 11 with WSL2.
-> Required software: Python 3.10+, Docker (orchestrator services), Ollama (local LLM).
-> Attendee equipment: laptop with $\geq$8\,GB RAM; a setup guide and pre-pulled Docker images will be provided in advance.
+Materials for the **3-hour tutorial** (Slot 2 lab, 45 min + 10 min debrief & Q&A).
 
-## Lab structure
+## Lab goals
 
-The lab is modular and can be run in parts. Each demo takes 10–15 minutes.
+- Treat data-engineering patterns as **specifications** (forces, obligations, consequences)
+- Generate orchestrator-native pipeline artifacts with an LLM
+- Deploy and execute artifacts, then **score delivered sink records** against reference outputs (execution-based evaluation), checking obligations such as idempotency, schema/contract conformance, and quality gates
 
-### Demo 1 — MIND ingestion pattern
-- **Goal:** Verify a metadata-driven ingestion pipeline that uses a catalog of connectors (declared as data, not code) and produces idempotent, resumable loads.
-- **Steps:**
-  1. A small JSON connector catalog is provided (3 sources: USGS, Open-Meteo, a custom CSV).
-  2. A Python script reads the catalog and issues the appropriate ingestion commands.
-  3. Run the pipeline twice to confirm idempotency (no duplicate records).
-  4. Modify one record in the source and re-run to confirm resumability.
-- **Outcome:** Attendees see how metadata-driven design reduces code duplication and enables portable pipelines.
+## Lightweight orchestrators (hands-on)
 
-### Demo 2 — ETLT vs. ELTL pattern comparison
-- **Goal:** Compare stage orderings and observe the enhanced (++) variants that add governance, versioning, and observability.
-- **Steps:**
-  1. Two pipeline definitions are provided: one ETL and one ETLT (with an extra Transform step after Load).
-  2. Execute both pipelines over the same input data and compare output records.
-  3. Inspect the ETLT++ contract file (YAML) that specifies schema evolution rules and quality gates.
-  4. Observe how the ++ variant flags a schema mismatch that the base ETL would silently accept.
-- **Outcome:** Attendees experience how explicit contracts make pipelines more robust and governable.
+The guided lab uses **Prefect** and **Kestra** as lightweight, containerized orchestrators representative of the surveyed landscape (Airflow, n8n, Dagster, Prefect, NiFi, Kestra).
 
-### Demo 3 — EADF promotion simulation
-- **Goal:** Simulate promoting a data pipeline across DEV $\rightarrow$ SIT $\rightarrow$ UAT $\rightarrow$ PROD using Environment-Aware Design Pattern (EADF) artifacts.
-- **Steps:**
-  1. A component definition YAML, an environment catalog YAML, and a pipeline template YAML are provided.
-  2. A simple script performs "late binding": it merges the component with the target environment's catalog, resolving environment-specific connections (DB URLs, API keys, etc.).
-  3. Run the script for each environment (DEV, SIT, UAT) and observe how bindings change.
-  4. A schema evolution test: modify a field in the component and re-run to see how the promotion policy handles the change.
-- **Outcome:** Attendees see how EADF eliminates environment-specific bugs and makes promotions reproducible and auditable.
+## Execution modes
 
-### Demo 4 — LLM-generated pipeline + execution-based evaluation
-- **Goal:** Generate an orchestrator-native pipeline artifact with a local LLM and score the data delivered to a sink.
-- **Steps:**
-  1. A pipeline task is described in natural language (e.g., "ingest USGS water level data, compute daily aggregates, sink to PostgreSQL").
-  2. Using Ollama (local LLM), generate an Airflow DAG or n8n JSON workflow that attempts to fulfill the task.
-  3. Deploy the generated artifact to a Dockerized orchestrator (provided image).
-  4. Execute the pipeline with archived fixture data and compare the sink records against a reference output.
-  5. Score the result: artifact error, execution error, or platform-specific issue.
-- **Outcome:** Attendees experience the full cycle: LLM-generated $\rightarrow$ deployed $\rightarrow$ executed $\rightarrow$ scored, and learn the limitations of syntax-only validation.
+### Local path (optional)
+- **OS:** Linux, macOS, or Windows 11 with WSL2
+- **Software:** Python 3.10+, Docker (Prefect/Kestra services and scoring harness), Ollama (local LLM)
+- **Equipment:** laptop with ≥8 GB RAM recommended
+- Pre-pulled Docker images and a lightweight cached model provided in advance; avoid downloads over conference Wi-Fi
 
-## Lab debrief (3 h version, 10 min)
-- Review scores and discuss common failure modes.
-- Compare platform-specific behaviors (e.g., NiFi vs. Airflow).
-- Pointers to the benchmark harness, fixtures, and reference artifacts.
+### Fallback path (recommended if local resources are limited)
+- **Hosted LLM endpoint** (OpenAI-compatible, session configuration provided) for artifact generation if local Ollama is unavailable or slow
+- **Pre-generated artifacts** and **pre-computed scoring outputs**, with optional instructor-hosted demo services
+- **No-setup follow-along mode** available for all attendees
 
-## Prerequisites checklist (per attendee)
-- [ ] Laptop with $\geq$8\,GB RAM, Docker running, Python 3.10+ installed
-- [ ] Ollama pulled (instructions provided before tutorial)
-- [ ] Pre-pulled Docker images (orchestrator services + evaluation harness)
-- [ ] Optional: a favorite data engineering task to try with the LLM
+## Lab flow (Prefect/Kestra)
 
-## Lab files
+1. **Select task and target:** choose a small pipeline task and target orchestrator (Prefect or Kestra)
+2. **Generate artifact:** produce an orchestrator-native artifact (prompted generation via local Ollama or hosted LLM endpoint)
+3. **Deploy/run:** run the artifact in the provided containerized environment
+4. **Score:** compare delivered sink records to a reference output using the evaluation harness; classify outcomes (artifact/execution/platform/harness issues) and relate failures to pattern obligations
 
-| File | Description |
-|---|---|
-| `demo_mind.py` | Demo 1 — MIND metadata-driven ingestion (uses `connectors.json`, `metadata-table.csv`) |
-| `demo_eltl.py` | Demo 2 — ETLT vs. ELTL pattern comparison (shows ETLT++ contract) |
-| `demo_eadf.py` | Demo 3 — EADF environment-aware promotion simulation |
-| `connectors.json` | Connector catalog for the MIND ingestion demo |
-| `metadata-table.csv` | Metadata table (source, table, primary key, watermark, ingestion type) for the MIND demo |
+## Included demos (pattern foundations)
 
-## Run instructions
+These runnable demos illustrate core patterns discussed in the tutorial and can be used as warm-up/reference exercises:
+
+| Demo | File(s) | Focus |
+|---|---|---|
+| Metadata-driven ingestion (MIND) | `demo_mind.py`, `connectors.json`, `metadata-table.csv` | Connectors/metadata as data, idempotent/resumable/incremental loads |
+| ETLT/ELTL and ETLT++ contract | `demo_eltl.py` | Stage ordering, contracts/versioning/quality gates/observability |
+| EADF promotion (late binding) | `demo_eadf.py` | Environment-aware promotion across DEV/SIT/UAT/PROD |
+
+### Run demos
 
 ```bash
 python3 demo_mind.py
 python3 demo_eltl.py
 python3 demo_eadf.py
 ```
+
+## Prefect/Kestra hands-on assets
+
+Containerized Prefect/Kestra services, task prompts, reference outputs, and the scoring harness are provided with the lab setup package (pre-pulled images/configuration shared before the tutorial). Use the fallback pre-generated artifacts and pre-computed scores if you cannot run services locally.
+
+## Debrief (10 min)
+
+- Review scores and common failure modes (API misuse, platform-specific behavior, schema/contract mismatches)
+- Discuss how execution-based scoring verifies pattern obligations (idempotency, schema evolution handling, quality gates, lineage-aware checks)
+- Pointers to benchmark harness, fixtures, and companion repositories

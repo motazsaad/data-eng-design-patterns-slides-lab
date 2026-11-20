@@ -6,7 +6,7 @@ This script compares two pipeline definitions:
 - ETL (Extract → Transform → Load)
 - ETLT (Extract → Transform → Load → Transform)
 
-It shows how ETLT++ adds governance, versioning, and observability.
+It shows how ETLT++ adds governance, versioning, semantic-layer/semantic-curation obligations, and observability, and how data-quality gates (e.g. schema validation and thresholds) can be specified as pattern obligations.
 
 Based on the ETLT/ELTL design pattern papers:
   C. Rucco, A. Longo, and M. Saad, "Enhancing data ingestion efficiency in cloud-based systems: A design pattern approach," Data Science and Engineering, vol. 11, pp. 287--302, 2026.

@@ -5,165 +5,145 @@
 \setbeamertemplate{footline}[frame number]
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{tikz}
-\usetikzlibrary{positioning, shapes.geometric}
+\usepackage{booktabs}
+\usepackage{array}
 
-\title{Data Engineering Design Patterns: Ingestion, Transformation, Promotion, and LLM Pipelines}
-\subtitle{ICDE 2027 tutorial proposal --- slide preview}
+\title{A Data-Management Perspective on Data Engineering Design Patterns}
+\subtitle{Specifications, Semantics, and Execution-Based Evaluation\\ICDE 2027 tutorial proposal --- slide preview}
 \author{Motaz K. H. Saad \and Chiara Rucco \and Antonella Longo}
 \institute{DataLab, Dept.\ of Engineering for Innovation, University of Salento}
-\date{ICDE 2027 tutorial proposal --- 13 slides}
+\date{Updated preview}
 
 \begin{document}
 
 % 1
 \begin{frame}
   \titlepage
-  \vspace{0.5em}
-  \small Format: 1.5 h or 3 h (3 h preferred, with hands-on lab)
+  \vspace{0.3em}
+  \small 1.5 h or 3 h (3 h preferred, hands-on lab) \quad \textbullet \quad Two 90-minute slots in 3 h version
 \end{frame}
 
 % 2
 \begin{frame}{Why design patterns for data engineering?}
   \begin{itemize}
-    \item Teams repeatedly build the same pipeline kinds: ingest $\rightarrow$ validate $\rightarrow$ transform $\rightarrow$ orchestrate $\rightarrow$ promote
-    \item The discipline lacks a shared, reusable vocabulary for these solutions
+    \item Teams repeatedly build pipelines: ingest $\rightarrow$ validate $\rightarrow$ transform $\rightarrow$ orchestrate $\rightarrow$ promote
+    \item The discipline needs a shared, reusable vocabulary for these solutions
     \item Design patterns capture proven structure, trade-offs, and applicability
-    \item Enables reasoning about pipelines instead of reinventing them
+    \item \textbf{Common thread:} patterns as explicit \emph{specifications} (context, forces, obligations, consequences) that make LLM-generated, orchestrator-native artifacts checkable via execution-based scoring
   \end{itemize}
 \end{frame}
 
 % 3
-\begin{frame}{Outline}
-  \begin{enumerate}
-    \item Foundations: what a design pattern is \hfill \textit{15 min}
-    \item Ingestion patterns: MIND and cloud \hfill \textit{20 min (3 h: 35)}
-    \item Transformation patterns: ETLT and ELTL \hfill \textit{20 min (3 h: 35)}
-    \item Environment-aware promotion: EADF \hfill \textit{15 min (3 h: 20)}
-    \item LLM-generated pipelines and evaluation \hfill \textit{15 min (3 h: 25)}
-    \item Open challenges \hfill \textit{5 min}
-    \item Q\&A \hfill \textit{---}
-  \end{enumerate}
-  \vspace{0.5em}
-  \small 3 h total: 180 min $\cdot$ 1.5 h: 90 min
+\begin{frame}{Outline and 3-hour slot split}
+  \small
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \textbf{Slot 1 (90 min)}
+      \begin{itemize}
+        \item P1 Foundations, related work, DM semantics (15)
+        \item P2 Ingestion patterns (40)
+        \item P3 ETLT/ELTL \& transformation (35)
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Slot 2 (90 min)}
+      \begin{itemize}
+        \item P4 EADF / CI-CD promotion (15)
+        \item P5 LLM pipelines \& evaluation (15)
+        \item P6 Open challenges (5)
+        \item P7 Hands-on lab (45)
+        \item Debrief \& Q\&A (10)
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{0.4em}
+  \footnotesize 1.5 h version: 90 min survey depth (P1--P6, no lab). Presenters: P1 Antonella (lead), Chiara; P2--P4 Chiara; P5 Motaz; P6 Antonella (lead), all; P7 Chiara (lead), Motaz (support).
 \end{frame}
 
 % 4
-\begin{frame}{Foundations: what a design pattern is}
+\begin{frame}{Foundations and data-management semantics}
   \begin{itemize}
-    \item POSA form: problem $\rightarrow$ context $\rightarrow$ forces $\rightarrow$ solution $\rightarrow$ consequences
-    \item Pattern vs. architecture vs. framework vs. tool
-    \item A pattern language for data engineering:
-    \begin{itemize}
-      \item Ingestion
-      \item Transformation
-      \item Orchestration
-      \item Quality
-      \item Promotion
-      \item Observability
-    \end{itemize}
-    \item Why patterns matter: reuse, communication, governance, auditability
+    \item POSA form: problem, context, forces, solution, consequences
+    \item Pattern language: ingestion, transformation, \textbf{semantic layer}, \textbf{data quality}, orchestration, promotion, observability
+    \item \textbf{Semantics covered across the tutorial:} delivery guarantees (exactly-once vs.\ at-least-once), idempotence and incremental loads, schema evolution, and lineage/provenance
+    \item Positioned within broader literature: ETL/ELT foundations, lakehouse layering, Dataflow semantics, data quality/metadata/lineage systems, and LLM/agent benchmarks for data workflows
   \end{itemize}
 \end{frame}
 
 % 5
-\begin{frame}{Ingestion patterns: MIND}
+\begin{frame}{Ingestion patterns}
   \begin{itemize}
-    \item Metadata-driven ingestion: connectors declared as data, not code
-    \item Schema/metadata catalog; idempotent, resumable loads
-    \item Forces: latency, cost, schema evolution, exactly-once vs. at-least-once
-    \item Case study: ingestion at scale from the SESG platform
+    \item \textbf{MIND} (metadata-driven): connectors declared as data; schema/metadata catalog; idempotent, resumable, incremental loads
+    \item Cloud ingestion: object storage + queue + compute; batching vs.\ streaming; backpressure and retry
+    \item Forces/semantics: exactly-once vs.\ at-least-once delivery, latency, cost, schema evolution, lineage/provenance, operational burden
+    \item Case study: ingestion at scale in SESG (Integrated Platform for Enhanced Analysis of ESG Reports), an ICSC/IFAB-supported initiative requiring scalable, metadata-driven ingestion of heterogeneous document corpora
   \end{itemize}
 \end{frame}
 
 % 6
-\begin{frame}{Ingestion patterns: cloud-based}
+\begin{frame}{Transformation, semantic layer, and data quality patterns}
   \begin{itemize}
-    \item Object storage + queue + compute; batching vs. streaming
-    \item Backpressure and retry patterns
-    \item Trade-offs: latency $\cdot$ cost $\cdot$ governance
-    \item Related: IEEE BigData 2024, IEEE S\&E 2026
+    \item ETL vs.\ ELT vs.\ ETLT vs.\ ELTL: stage structures, data layers, and trade-offs
+    \item Enhanced variants (ETLT++/ELTL++): contracts, versioning, schema evolution, semantic-layer/semantic-curation obligations, lineage/provenance, continuous monitoring
+    \item \textbf{Data-quality design patterns} as reusable specifications: profiling, rule-based validation, anomaly detection, issue triage, and governed remediation
+    \item Positioned against lakehouse/medallion layering and foundational ETL/integration research
   \end{itemize}
 \end{frame}
 
 % 7
-\begin{frame}{Transformation patterns: ETLT and ELTL}
+\begin{frame}{EADF: Environment-aware promotion in CI/CD}
   \begin{itemize}
-    \item ETL vs. ELT vs. ETLT vs. ELTL: stage structures and data layers
-    \item Trade-offs under scale and governance constraints
-    \item Enhanced variants ETLT++ and ELTL++: contracts, versioning,
-    semantic curation, continuous monitoring
-    \item Related: FGCS 2026, BigData Research 2026
+    \item Promotion problem: environment-specific bindings as hidden technical debt
+    \item EADF: four YAML artifacts (component, environment catalog, pipeline template, promotion policy) with late binding at deploy time
+    \item Data-quality gates, schema evolution, lineage/provenance, stateful components
+    \item Tool-neutral application (e.g. GitHub Actions, GitLab CI, Azure DevOps, Airflow, dbt)
   \end{itemize}
 \end{frame}
 
 % 8
-\begin{frame}{EADF: Environment-aware promotion in CI/CD}
+\begin{frame}{LLM-generated pipelines and execution-based evaluation}
   \begin{itemize}
-    \item The promotion problem: environment-specific bindings as hidden technical debt
-    \item EADF: four YAML artifacts (component, environment catalog,
-    pipeline template, promotion policy) with late binding at deploy time
-    \item Data-quality gates, schema evolution, stateful components
-    \item Tool-neutral: GitHub Actions, GitLab CI, Azure DevOps,
-    Airflow, dbt
+    \item Orchestrator landscape: Airflow, n8n, Dagster, Prefect, NiFi, Kestra
+    \item Syntactic validity $\neq$ correctness: evaluate by executing artifacts and scoring sink-level data
+    \item Execution-based benchmark: tasks, archived fixtures, one contract, containerized execution, repair rounds; failure taxonomy (artifact, execution, platform, harness)
+    \item Pattern obligations as checks: idempotency, schema/contract conformance, quality gates
   \end{itemize}
 \end{frame}
 
 % 9
-\begin{frame}{LLM-generated pipelines and evaluation}
+\begin{frame}{Hands-on lab (3 h, Slot 2)}
   \begin{itemize}
-    \item Orchestrator landscape: Airflow (Python DAG), n8n (JSON),
-    Dagster (Python job), Prefect (Python flow), NiFi (Groovy),
-    Kestra (YAML)
-    \item Why syntactically valid $\neq$ correct: score the data delivered
-    \item Execution-based benchmark: six tasks, archived fixtures,
-    one contract, Dockerised execution, up to two repair rounds
-    \item Failure taxonomy: artifact, execution, platform, harness
+    \item \textbf{Lightweight orchestrators:} Prefect and Kestra (containerized)
+    \item Flow: select task $\rightarrow$ generate orchestrator-native artifact $\rightarrow$ deploy/run $\rightarrow$ score sink records against reference output
+    \item \textbf{Local path (optional):} Python 3.10+, Docker, Ollama; laptop $\geq$8\,GB RAM recommended
+    \item \textbf{Fallback path:} hosted LLM endpoint (OpenAI-compatible) for generation; pre-generated artifacts and pre-computed scoring outputs, with optional instructor-hosted demo services
+    \item Pre-pulled images/cached models; no-setup follow-along mode for all attendees
   \end{itemize}
 \end{frame}
 
 % 10
-\begin{frame}{Open challenges}
+\begin{frame}{Open challenges and resources}
   \begin{itemize}
     \item Pattern mining, validation, and versioning
     \item Benchmark validity, contamination, and reproducibility
     \item Governance, provenance, cost, and human-in-the-loop pipelines
+    \item Companion materials: benchmark harness/fixtures, ingestion/ETLT/EADF/LLM-generation repositories, data-quality design pattern materials (UNICC), slides and lab setup guide
   \end{itemize}
+  \vspace{0.5em}
+  \centering \url{https://github.com/motazsaad/data-eng-design-patterns-slides-lab}
 \end{frame}
 
 % 11
-\begin{frame}{Hands-on lab (3 h version)}
-  \begin{itemize}
-    \item Specify a pipeline task, generate an artifact with a local LLM (Ollama)
-    \item Deploy it to a containerized orchestrator, score delivered records against reference output
-    \item Supported OS: Linux, macOS, Windows 11 with WSL2
-    \item Required: Python 3.10+, Docker, Ollama; laptop $\geq$8\,GB RAM
-    \item Follow-along: pre-pulled Docker images, cached models; no downloads over Wi-Fi
-  \end{itemize}
-\end{frame}
-
-% 12
-\begin{frame}{Hands-on lab and resources}
-  \begin{itemize}
-    \item Code: open-source, Apache-2.0, made available to attendees
-    \item Companion benchmark harness, fixtures, reference artifacts (released with [R6])
-    \item Text-to-SQL reference demo
-    \item ESG RAG evaluation and embedding-benchmark repositories
-    \item Slide preview and lab setup guide released before conference
-  \end{itemize}
-  \vspace{0.5em}
-  \centering Questions and discussion
-\end{frame}
-
-% 13
 \begin{frame}
   \centering Thank you!
   \vspace{1em}
+
   \small Questions?
-  \\\\
-  \textit{Motaz K. H. Saad} $\rightarrow$ motaz.saad@unisalento.it\\
-  \textit{Chiara Rucco} $\rightarrow$ chiara.rucco@unisalento.it\\
-  \textit{Antonella Longo} $\rightarrow$ antonella.longo@unisalento.it
+
+  \vspace{1em}
+  \textit{Motaz K. H. Saad} --- \texttt{motazk.saad@unisalento.it}\\
+  \textit{Chiara Rucco} --- \texttt{chiara.rucco@unisalento.it}\\
+  \textit{Antonella Longo} --- \texttt{antonella.longo@unisalento.it}
 \end{frame}
 
 \end{document}
