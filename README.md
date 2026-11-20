@@ -39,7 +39,7 @@ Topics covered:
 
 - MIND / ingestion design pattern: https://github.com/ChiaraRucco/DataEngDesignPattern_paper
 - LLM-based pipeline generation: https://github.com/ChiaraRucco/LLM-pipeline-generation
-- CI/CD design pattern validation (EADF): https://github.com/ChiaraRucco/CICD_DesignPattern_valuation
+- CI/CD design pattern validation (EADF): https://github.com/ChiaraRucco/CICD_DesignPattern_Validation
 - Tutorial slides and hands-on lab (this repo): https://github.com/motazsaad/data-eng-design-patterns-slides-lab
 
 ## License
